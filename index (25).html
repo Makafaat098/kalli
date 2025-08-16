@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CoinXora - Crypto Platform</title>
+    <style>
+        /* Main Content Styles */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
+            color: #333;
+            padding-top: 70px;
+            overflow-x: hidden;
+        }
+        
+        .main-content {
+            padding: 20px 5%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .hero {
+            text-align: center;
+            padding: 40px 0;
+        }
+        
+        .hero h1 {
+            font-size: clamp(1.8rem, 4vw, 2.8rem);
+            margin-bottom: 15px;
+            background: linear-gradient(90deg, #00dbde 0%, #fc00ff 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .hero p {
+            font-size: clamp(1rem, 2vw, 1.2rem);
+            color: #666;
+            max-width: 700px;
+            margin: 0 auto 30px;
+        }
+        
+        .btn {
+            padding: 10px 25px;
+            border-radius: 30px;
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            margin: 0 8px 10px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(90deg, #00dbde 0%, #fc00ff 100%);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: rgba(0, 0, 0, 0.05);
+            color: #333;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 50px;
+        }
+        
+        .feature-card {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .feature-icon {
+            font-size: 2.2rem;
+            margin-bottom: 15px;
+            background: linear-gradient(90deg, #00dbde 0%, #fc00ff 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        /* Optimized NFT Showcase Styles */
+        .nft-showcase {
+            margin: 60px 0;
+            text-align: center;
+            position: relative;
+        }
+
+        .nft-showcase h2 {
+            font-size: clamp(1.6rem, 3vw, 2.2rem);
+            margin-bottom: 30px;
+            background: linear-gradient(90deg, #00dbde 0%, #fc00ff 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .showcase-container {
+            position: relative;
+            width: 100%;
+            height: clamp(300px, 50vw, 500px);
+            perspective: 1200px;
+            transform-style: preserve-3d;
+            margin: 0 auto;
+            touch-action: pan-y;
+        }
+
+        .nft-card {
+            position: absolute;
+            width: clamp(150px, 30vw, 240px);
+            height: clamp(225px, 45vw, 360px);
+            opacity: 0;
+            transform: translate3d(0, 80px, -100px) scale(0.7) rotate(3deg);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
+                        opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            border: 2px solid #00f7ff;
+            overflow: hidden;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(0, 255, 255, 0.03));
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+            will-change: transform, opacity;
+            backface-visibility: hidden;
+            transform-style: preserve-3d;
+        }
+
+        .nft-card.active {
+            opacity: 1;
+            transform: translate3d(0, 0, 0) scale(1) rotate(0);
+            z-index: 10;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4), 0 0 12px rgba(0, 255, 255, 0.4);
+            border: 2px solid #00f7ff;
+        }
+
+        .nft-card a {
+            display: block;
+            width: 100%;
+            height: 100%;
+            text-decoration: none;
+            position: relative;
+        }
+
+        .nft-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+            pointer-events: none;
+            backface-visibility: hidden;
+        }
+
+        .nft-card:hover img {
+            transform: scale(1.05);
+        }
+
+        .price-tag {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            z-index: 2;
+        }
+
+        .price-tag img {
+            width: 16px;
+            height: 16px;
+            margin-right: 5px;
+        }
+
+        /* Navigation Arrows */
+        .nft-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 20;
+            border: none;
+            font-size: 1.2rem;
+            color: #333;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+
+        .nft-nav:hover {
+            background: white;
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .nft-nav.prev {
+            left: 10px;
+        }
+
+        .nft-nav.next {
+            right: 10px;
+        }
+
+        /* Loading indicator */
+        .loading-indicator {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 5;
+        }
+
+        /* Mobile optimizations */
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 15px;
+            }
+            
+            .hero {
+                padding: 30px 0;
+            }
+            
+            .btn {
+                padding: 8px 20px;
+                margin: 0 5px 8px;
+            }
+            
+            .features {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .nft-nav {
+                width: 35px;
+                height: 35px;
+                font-size: 1rem;
+            }
+            
+            .nft-card {
+                transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), 
+                            opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            }
+
+            .price-tag {
+                font-size: 12px;
+                padding: 3px 8px;
+            }
+
+            .price-tag img {
+                width: 14px;
+                height: 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nft-nav {
+                width: 30px;
+                height: 30px;
+                font-size: 0.9rem;
+            }
+            
+            .nft-showcase h2 {
+                margin-bottom: 20px;
+            }
+
+            .price-tag {
+                font-size: 10px;
+                padding: 2px 6px;
+            }
+
+            .price-tag img {
+                width: 12px;
+                height: 12px;
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header will be loaded here -->
+    <div id="header-container"></div>
+
+    <main class="main-content">
+        <section class="hero">
+            <h1>Welcome to CoinXora</h1>
+            <p>Your complete solution for cryptocurrency trading, investments, and portfolio management. Join thousands of users worldwide.</p>
+            <div>
+                <button class="btn btn-primary">Get Started</button>
+                <button class="btn btn-secondary">Learn More</button>
+            </div>
+        </section>
+        
+        <!-- Optimized NFT Showcase Section -->
+        <section class="nft-showcase">
+            <h2>Featured NFT Collections</h2>
+            <div class="showcase-container" id="showcase-container">
+                <!-- Cards will be injected by JavaScript -->
+                <div class="loading-indicator">
+                    <i class="fas fa-spinner fa-spin"></i>
+                </div>
+            </div>
+            <button class="nft-nav prev" aria-label="Previous NFT"><i class="fas fa-chevron-left"></i></button>
+            <button class="nft-nav next" aria-label="Next NFT"><i class="fas fa-chevron-right"></i></button>
+        </section>
+        
+        <section class="features">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3>Real-time Analytics</h3>
+                <p>Track market movements with our advanced analytics tools and make informed decisions.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-wallet"></i>
+                </div>
+                <h3>Secure Wallet</h3>
+                <p>Your assets are protected with our multi-layer security system and cold storage.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-exchange-alt"></i>
+                </div>
+                <h3>Instant Trading</h3>
+                <p>Buy and sell cryptocurrencies instantly with our lightning-fast trading engine.</p>
+            </div>
+            <div id="navbar-container"></div>
+        </section>
+    </main>
+
+    <script>
+        // Load header.html
+        fetch('header.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('header-container').innerHTML = data;
+                
+                // Re-attach event listeners for the mobile menu
+                const toggleMenu = document.getElementById('toggleMenu');
+                const mobileMenu = document.getElementById('mobileMenu');
+                
+                if (toggleMenu && mobileMenu) {
+                    toggleMenu.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        mobileMenu.classList.toggle('active');
+                        
+                        const icon = toggleMenu.querySelector('i');
+                        if (mobileMenu.classList.contains('active')) {
+                            icon.classList.remove('fa-bars');
+                            icon.classList.add('fa-times');
+                        } else {
+                            icon.classList.remove('fa-times');
+                            icon.classList.add('fa-bars');
+                        }
+                    });
+                    
+                    document.addEventListener('click', function(event) {
+                        if (!event.target.closest('.mobile-menu') && !event.target.closest('.toggle-menu')) {
+                            mobileMenu.classList.remove('active');
+                            const icon = toggleMenu.querySelector('i');
+                            icon.classList.remove('fa-times');
+                            icon.classList.add('fa-bars');
+                        }
+                    });
+                    
+                    mobileMenu.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error loading header:', error);
+                document.getElementById('header-container').innerHTML = '<div style="padding: 20px; background: #f8d7da; color: #721c24;">Error loading header. Please check if header.html exists.</div>';
+            });
+
+        // Simple navbar loader
+        fetch('navbar.html')
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('navbar-container').innerHTML = html;
+            });
+
+        // Optimized NFT Showcase Script
+        document.addEventListener('DOMContentLoaded', function() {
+            const nfts = [
+                { src: 'nft1.webp', link: 'https://example.com/auction/1', price: '53.60' },
+                { src: 'nft2.webp', link: 'https://example.com/auction/2', price: '45.78' },
+                { src: 'nft3.webp', link: 'https://example.com/auction/3', price: '67.89' },
+                { src: 'nft4.webp', link: 'https://example.com/auction/4', price: '89.12' },
+                { src: 'nft5.webp', link: 'https://example.com/auction/5', price: '112.45' },
+                { src: 'nft6.webp', link: 'https://example.com/auction/6', price: '34.56' },
+                { src: 'nft7.webp', link: 'https://example.com/auction/7', price: '78.90' },
+                { src: 'nft8.webp', link: 'https://example.com/auction/8', price: '95.43' },
+                { src: 'nft9.webp', link: 'https://example.com/auction/9', price: '120.67' },
+                { src: 'nft10.webp', link: 'https://example.com/auction/10', price: '56.78' },
+                { src: 'nft11.webp', link: 'https://example.com/auction/11', price: '225.77' },
+                { src: 'nft12.webp', link: 'https://example.com/auction/12', price: '88.99' },
+                { src: 'nft13.webp', link: 'https://example.com/auction/13', price: '145.33' }
+            ];
+
+            const showcase = document.getElementById('showcase-container');
+            let currentIndex = 0;
+            let isAnimating = false;
+            let autoCycleInterval;
+            let nftCards = [];
+
+            // Preload images including USDT icon
+            function preloadImages() {
+                nfts.forEach(nft => {
+                    const img = new Image();
+                    img.src = nft.src;
+                });
+                // Preload USDT icon
+                const usdtIcon = new Image();
+                usdtIcon.src = 'usdt.webp';
+            }
+
+            // Create NFT cards dynamically
+            function createNFTCards() {
+                showcase.innerHTML = ''; // Clear loading indicator
+                
+                nfts.forEach((nft, i) => {
+                    const card = document.createElement('div');
+                    card.className = 'nft-card';
+                    if (i === 0) card.classList.add('active');
+                    
+                    card.innerHTML = `
+                        <a href="${nft.link}" target="_blank">
+                            <img src="${nft.src}" alt="NFT ${i + 1}" loading="lazy">
+                            <div class="price-tag">
+                                <img src="usdt.webp" alt="USDT">
+                                <span>${nft.price} USDT</span>
+                            </div>
+                        </a>
+                    `;
+                    
+                    // Add click handler for login check
+                    card.querySelector('a').addEventListener('click', function(e) {
+                        if (!checkLoginStatus()) {
+                            e.preventDefault();
+                            window.location.href = 'register.html';
+                        }
+                    });
+                    
+                    showcase.appendChild(card);
+                });
+                
+                nftCards = document.querySelectorAll('.nft-card');
+                updateShowcase();
+            }
+
+            function checkLoginStatus() {
+                return !!localStorage.getItem('userToken');
+            }
+
+            function updateShowcase() {
+                // Optimized positions for better performance
+                const positions = [
+                    { x: -100, y: -60, z: -120, rotate: -8, opacity: 0.3 },
+                    { x: 100, y: -60, z: -120, rotate: 8, opacity: 0.3 },
+                    { x: -140, y: 0, z: -160, rotate: -10, opacity: 0.25 },
+                    { x: 140, y: 0, z: -160, rotate: 10, opacity: 0.25 },
+                    { x: -100, y: 60, z: -120, rotate: -8, opacity: 0.2 },
+                    { x: 100, y: 60, z: -120, rotate: 8, opacity: 0.2 },
+                    { x: -60, y: 80, z: -140, rotate: -6, opacity: 0.15 },
+                    { x: 60, y: 80, z: -140, rotate: 6, opacity: 0.15 },
+                    { x: -160, y: -80, z: -180, rotate: -12, opacity: 0.2 },
+                    { x: 160, y: -80, z: -180, rotate: 12, opacity: 0.2 },
+                    { x: -180, y: 30, z: -200, rotate: -14, opacity: 0.15 },
+                    { x: 180, y: 30, z: -200, rotate: 14, opacity: 0.15 }
+                ];
+
+                nftCards.forEach((card, i) => {
+                    if (i === currentIndex) {
+                        card.classList.add('active');
+                        card.style.transform = 'translate3d(0, 0, 0) scale(1) rotate(0)';
+                        card.style.opacity = '1';
+                    } else {
+                        card.classList.remove('active');
+                        const posIndex = (i - currentIndex + nfts.length) % nfts.length - 1;
+                        const pos = posIndex >= 0 && posIndex < positions.length ? positions[posIndex] : positions[0];
+                        card.style.transform = `translate3d(${pos.x}px, ${pos.y}px, ${pos.z}px) scale(0.7) rotate(${pos.rotate}deg)`;
+                        card.style.opacity = pos.opacity;
+                    }
+                });
+            }
+
+            function changeNFT(direction) {
+                if (isAnimating || !nftCards.length) return;
+                isAnimating = true;
+
+                // Reset auto-cycle timer
+                resetAutoCycle();
+
+                const prevIndex = currentIndex;
+                if (direction === 'right') {
+                    currentIndex = (currentIndex + 1) % nfts.length;
+                } else {
+                    currentIndex = (currentIndex - 1 + nfts.length) % nfts.length;
+                }
+
+                // Start animation
+                nftCards[prevIndex].classList.remove('active');
+                nftCards[currentIndex].classList.add('active');
+                nftCards[currentIndex].style.transform = 'translate3d(0, -40px, -100px) scale(0.8) rotate(0)';
+                nftCards[currentIndex].style.opacity = '0';
+
+                // Use requestAnimationFrame for smoother animations
+                requestAnimationFrame(() => {
+                    setTimeout(() => {
+                        updateShowcase();
+                        isAnimating = false;
+                    }, 400); // Matches CSS transition duration
+                });
+            }
+
+            // Auto-cycle functionality with controls
+            function startAutoCycle() {
+                autoCycleInterval = setInterval(() => {
+                    if (!isAnimating && document.visibilityState === 'visible') {
+                        changeNFT('right');
+                    }
+                }, 5000);
+            }
+
+            function resetAutoCycle() {
+                clearInterval(autoCycleInterval);
+                startAutoCycle();
+            }
+
+            // Initialize
+            preloadImages();
+            createNFTCards();
+            startAutoCycle();
+
+            // Event listeners
+            document.querySelector('.nft-nav.next').addEventListener('click', () => changeNFT('right'));
+            document.querySelector('.nft-nav.prev').addEventListener('click', () => changeNFT('left'));
+
+            // Touch events for mobile
+            let touchStartX = 0;
+            showcase.addEventListener('touchstart', (e) => {
+                touchStartX = e.touches[0].clientX;
+                e.preventDefault();
+            }, { passive: false });
+
+            showcase.addEventListener('touchend', (e) => {
+                const touchEndX = e.changedTouches[0].clientX;
+                const deltaX = touchEndX - touchStartX;
+                if (Math.abs(deltaX) > 30) {
+                    const direction = deltaX < 0 ? 'right' : 'left';
+                    changeNFT(direction);
+                }
+                e.preventDefault();
+            }, { passive: false });
+
+            // Pause auto-cycle when tab is not visible
+            document.addEventListener('visibilitychange', () => {
+                if (document.visibilityState === 'hidden') {
+                    clearInterval(autoCycleInterval);
+                } else {
+                    resetAutoCycle();
+                }
+            });
+
+            // Prevent scrolling when interacting with NFT showcase
+            showcase.addEventListener('touchmove', (e) => {
+                e.preventDefault();
+            }, { passive: false });
+        });
+    </script>
+</body>
+</html>
